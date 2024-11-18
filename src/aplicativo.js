@@ -104,34 +104,12 @@ app.post('/tarefa', validarAutenticacao, async (request, response) => {
 
 app.put('/tarefa/:id', validarAutenticacao, async (request, response) => {
   try {
-    const { descricao, completa } = request.body
-    const tarefas = await lerTarefas()
-    const index = tarefas.findIndex(t => t.id === request.params.id)
-
-    if (index === -1) {
-      return response.status(404).json({ error: 'Tarefa não encontrada' })
-    }
-
-    if (typeof descricao !== 'string' || descricao.trim() === "") {
-      return response.status(400).json({ error: 'O campo "descricao" é obrigatório e deve ser uma string.' })
-    }
-
-    if (typeof completa !== 'boolean' && completa !== undefined) {
-      return response.status(400).json({ error: 'O campo "completa" deve ser boolean.' })
-    }
-
-    if (descricao !== undefined) {
-      tarefas[index].descricao = descricao
-    }
-
-    if (completa !== undefined) {
-      tarefas[index].completa = completa
-    }
-
-    await gravarTarefas(tarefas)
-
-    response.json(tarefas[index])
+    const tarefaAtualizada = await bancoDeDados.atualizarTarefa(request.params.id, request.body)
+    response.json(tarefaAtualizada)
   } catch (error) {
+    if (error instanceof bancoDeDados.ErroDeBancoDeDados) {
+      return response.status(400).json({ error: error.message })  
+    }
     response.status(500).json({ error: 'Erro ao atualizar a tarefa' })
   }
 })

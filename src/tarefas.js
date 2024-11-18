@@ -67,7 +67,35 @@ export async function criarTarefa(tarefa) {
 
 // CRUD - Update
 
-export async function atualizarTarefa(id, tarefa) { }
+export async function atualizarTarefa(id, tarefa) {
+    const { descricao, completa } = tarefa
+    const tarefas = await lerTarefas()
+    const index = tarefas.findIndex(t => t.id === id)
+
+    if (index === -1) {
+      throw new ErroDeBancoDeDados('Tarefa não encontrada')
+    }
+
+    if (typeof descricao !== 'string' || descricao.trim() === "") {
+      throw new ErroDeBancoDeDados('O campo "descricao" é obrigatório e deve ser uma string.')
+    }
+
+    if (typeof completa !== 'boolean' && completa !== undefined) {
+      throw new ErroDeBancoDeDados('O campo "completa" deve ser boolean.')
+    }
+
+    if (descricao !== undefined) {
+      tarefas[index].descricao = descricao
+    }
+
+    if (completa !== undefined) {
+      tarefas[index].completa = completa
+    }
+
+    await gravarTarefas(tarefas)
+
+    return JSON.parse(JSON.stringify(tarefas[index]))
+}
 
 // CRUD - Delete
 

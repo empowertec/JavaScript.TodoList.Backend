@@ -17,5 +17,8 @@
     "nodemon": "^3.1.7",
     "passport": "^0.7.0",
     "passport-github2": "^0.1.12"
+  },
+  "devDependencies": {
+    "prisma": "^5.22.0"
   }
 }

@@ -1,5 +1,5 @@
 import * as erros from './tarefas-bd-erros.js'
-import * as bancoDeDados from './tarefas-bd-arquivo.js'
+import * as bancoDeDados from './tarefas-bd-prisma.js'
 
 export const ErroDeBancoDeDados = erros.ErroDeBancoDeDados
 export const ErroDeOperacao = erros.ErroDeOperacao

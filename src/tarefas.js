@@ -19,3 +19,25 @@ export async function gravarTarefas(tarefas) {
     console.error(`Erro ao gravar no arquivo ${arquivo}:`, error)
   }
 }
+
+// CRUD - Read
+
+export async function obterTarefas() {
+  return lerTarefas()
+}
+
+// CRUD - Read
+
+export async function obterTarefa(id) { }
+
+// CRUD - Create
+
+export async function criarTarefa(tarefa) { }
+
+// CRUD - Update
+
+export async function atualizarTarefa(id, tarefa) { }
+
+// CRUD - Delete
+
+export async function apagarTarefa(id) { }

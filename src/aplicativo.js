@@ -1,6 +1,7 @@
 import express from 'express'
 import cors from 'cors'
 import { lerTarefas, gravarTarefas } from './tarefas.js'
+import * as bancoDeDados from './tarefas.js'
 import passport from 'passport'
 import session from 'express-session'
 import { Strategy as GitHubStrategy } from 'passport-github2'
@@ -67,7 +68,7 @@ app.get('/', (request, response) => response.send('Olá Tarefas'))
 
 app.get('/tarefas', validarAutenticacao, async (request, response) => {
   try {
-    const tarefas = await lerTarefas()
+    const tarefas = await bancoDeDados.obterTarefas()
     response.json(tarefas)
   } catch (error) {
     response.status(500).json({ error: 'Erro ao obter tarefas' })
@@ -76,11 +77,7 @@ app.get('/tarefas', validarAutenticacao, async (request, response) => {
 
 app.get('/tarefa/:id', validarAutenticacao, async (request, response) => {
   try {
-    const tarefas = await lerTarefas()
-    const tarefa = tarefas.find(t => t.id === request.params.id)
-    if (!tarefa) {
-      return response.status(404).json({ error: 'Tarefa não encontrada' })
-    }
+    const tarefa = await bancoDeDados.obterTarefa(request.params.id)
     response.json(tarefa)
   } catch (error) {
     response.status(500).json({ error: 'Erro ao obter a tarefa' })

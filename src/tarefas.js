@@ -28,7 +28,14 @@ export async function obterTarefas() {
 
 // CRUD - Read
 
-export async function obterTarefa(id) { }
+export async function obterTarefa(id) {
+  const tarefas = await lerTarefas()
+  const tarefa = tarefas.find(t => t.id === id)
+  if (!tarefa) {
+    throw new Error('Tarefa não encontrada')
+  }
+  return tarefa
+}
 
 // CRUD - Create
 

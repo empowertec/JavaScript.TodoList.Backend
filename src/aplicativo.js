@@ -1,6 +1,5 @@
 import express from 'express'
 import cors from 'cors'
-import { lerTarefas, gravarTarefas } from './tarefas.js'
 import * as bancoDeDados from './tarefas.js'
 import passport from 'passport'
 import session from 'express-session'
@@ -71,6 +70,7 @@ app.get('/tarefas', validarAutenticacao, async (request, response) => {
     const tarefas = await bancoDeDados.obterTarefas()
     response.json(tarefas)
   } catch (error) {
+    console.error(error)
     if (error instanceof bancoDeDados.ErroDeBancoDeDados) {
       return response.status(404).json({ error: error.message })  
     }
@@ -83,6 +83,7 @@ app.get('/tarefa/:id', validarAutenticacao, async (request, response) => {
     const tarefa = await bancoDeDados.obterTarefa(request.params.id)
     response.json(tarefa)
   } catch (error) {
+    console.error(error)
     if (error instanceof bancoDeDados.ErroDeBancoDeDados) {
       return response.status(404).json({ error: error.message })  
     }
@@ -95,6 +96,7 @@ app.post('/tarefa', validarAutenticacao, async (request, response) => {
     const novaTarefa = await bancoDeDados.criarTarefa(request.body)
     response.status(201).json(novaTarefa)
   } catch (error) {
+    console.error(error)
     if (error instanceof bancoDeDados.ErroDeBancoDeDados) {
       return response.status(400).json({ error: error.message })  
     }
@@ -107,6 +109,7 @@ app.put('/tarefa/:id', validarAutenticacao, async (request, response) => {
     const tarefaAtualizada = await bancoDeDados.atualizarTarefa(request.params.id, request.body)
     response.json(tarefaAtualizada)
   } catch (error) {
+    console.error(error)
     if (error instanceof bancoDeDados.ErroDeBancoDeDados) {
       const httpCode = error instanceof bancoDeDados.ErroDeValidacao ? 400 : 404
       return response.status(httpCode).json({ error: error.message })  
@@ -120,6 +123,7 @@ app.delete('/tarefa/:id', validarAutenticacao, async (request, response) => {
     const tarefaApagada = await bancoDeDados.apagarTarefa(request.params.id)
     response.json(tarefaApagada)
   } catch (error) {
+    console.error(error)
     if (error instanceof bancoDeDados.ErroDeBancoDeDados) {
       const httpCode = error instanceof bancoDeDados.ErroDeValidacao ? 400 : 404
       return response.status(httpCode).json({ error: error.message })  
@@ -135,6 +139,7 @@ app.patch('/tarefa/:id/completa', validarAutenticacao, async (request, response)
     })
     response.json(tarefaAtualizada)
   } catch (error) {
+    console.error(error)
     if (error instanceof bancoDeDados.ErroDeBancoDeDados) {
       const httpCode = error instanceof bancoDeDados.ErroDeValidacao ? 400 : 404
       return response.status(httpCode).json({ error: error.message })  
@@ -150,6 +155,7 @@ app.patch('/tarefa/:id/incompleta', validarAutenticacao, async (request, respons
     })
     response.json(tarefaAtualizada)
   } catch (error) {
+    console.error(error)
     if (error instanceof bancoDeDados.ErroDeBancoDeDados) {
       const httpCode = error instanceof bancoDeDados.ErroDeValidacao ? 400 : 404
       return response.status(httpCode).json({ error: error.message })  

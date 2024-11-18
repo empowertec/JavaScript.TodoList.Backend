@@ -80,16 +80,17 @@ export async function atualizarTarefa(id, tarefa) {
 // CRUD - Delete
 
 export async function apagarTarefa(id) {
-  const tarefas = await lerTarefas()
-  const index = tarefas.findIndex(t => t.id === id)
+  const tarefaExistente = await prisma.tarefa.findUnique({
+    where: { id }
+  })
 
-  if (index === -1) {
+  if (!tarefaExistente) {
     throw new ErroDeOperacao('Tarefa não encontrada')
   }
 
-  const tarefaApagada = tarefas.splice(index, 1)[0]
-
-  await gravarTarefas(tarefas)
+  const tarefaApagada = await prisma.tarefa.delete({
+    where: { id: tarefaExistente.id }
+  })
 
   return tarefaApagada
 }

@@ -21,6 +21,8 @@ export async function gravarTarefas(tarefas) {
 }
 
 export class ErroDeBancoDeDados extends Error {}
+export class ErroDeValidacao extends ErroDeBancoDeDados {}
+export class ErroDeOperacao extends ErroDeBancoDeDados {}
 
 // CRUD - Read
 
@@ -34,7 +36,7 @@ export async function obterTarefa(id) {
   const tarefas = await lerTarefas()
   const tarefa = tarefas.find(t => t.id === id)
   if (!tarefa) {
-    throw new ErroDeBancoDeDados('Tarefa não encontrada')
+    throw new ErroDeOperacao('Tarefa não encontrada')
   }
   return tarefa
 }
@@ -45,11 +47,11 @@ export async function criarTarefa(tarefa) {
   const { descricao, completa } = tarefa
 
   if (typeof descricao !== 'string' || descricao.trim() === "") {
-    throw new ErroDeBancoDeDados('O campo "descricao" é obrigatório e deve ser uma string.')
+    throw new ErroDeValidacao('O campo "descricao" é obrigatório e deve ser uma string.')
   }
 
   if (typeof completa !== 'boolean' && completa !== undefined) {
-    throw new ErroDeBancoDeDados('O campo "completa" deve ser boolean.')
+    throw new ErroDeValidacao('O campo "completa" deve ser boolean.')
   }
 
   const novaTarefa = {
@@ -73,15 +75,15 @@ export async function atualizarTarefa(id, tarefa) {
     const index = tarefas.findIndex(t => t.id === id)
 
     if (index === -1) {
-      throw new ErroDeBancoDeDados('Tarefa não encontrada')
+      throw new ErroDeOperacao('Tarefa não encontrada')
     }
 
     if (typeof descricao !== 'string' || descricao.trim() === "") {
-      throw new ErroDeBancoDeDados('O campo "descricao" é obrigatório e deve ser uma string.')
+      throw new ErroDeValidacao('O campo "descricao" é obrigatório e deve ser uma string.')
     }
 
     if (typeof completa !== 'boolean' && completa !== undefined) {
-      throw new ErroDeBancoDeDados('O campo "completa" deve ser boolean.')
+      throw new ErroDeValidacao('O campo "completa" deve ser boolean.')
     }
 
     if (descricao !== undefined) {

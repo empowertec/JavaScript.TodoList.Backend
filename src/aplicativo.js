@@ -108,7 +108,8 @@ app.put('/tarefa/:id', validarAutenticacao, async (request, response) => {
     response.json(tarefaAtualizada)
   } catch (error) {
     if (error instanceof bancoDeDados.ErroDeBancoDeDados) {
-      return response.status(400).json({ error: error.message })  
+      const httpCode = error instanceof bancoDeDados.ErroDeValidacao ? 400 : 404
+      return response.status(httpCode).json({ error: error.message })  
     }
     response.status(500).json({ error: 'Erro ao atualizar a tarefa' })
   }

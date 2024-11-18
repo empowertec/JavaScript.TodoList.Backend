@@ -78,7 +78,7 @@ export async function atualizarTarefa(id, tarefa) {
       throw new ErroDeOperacao('Tarefa não encontrada')
     }
 
-    if (typeof descricao !== 'string' || descricao.trim() === "") {
+    if ((typeof descricao !== 'string' && descricao !== undefined) || descricao?.trim() === "") {
       throw new ErroDeValidacao('O campo "descricao" é obrigatório e deve ser uma string.')
     }
 
@@ -101,4 +101,17 @@ export async function atualizarTarefa(id, tarefa) {
 
 // CRUD - Delete
 
-export async function apagarTarefa(id) { }
+export async function apagarTarefa(id) {
+  const tarefas = await lerTarefas()
+  const index = tarefas.findIndex(t => t.id === id)
+
+  if (index === -1) {
+    throw new ErroDeOperacao('Tarefa não encontrada')
+  }
+
+  const tarefaApagada = tarefas.splice(index, 1)[0]
+
+  await gravarTarefas(tarefas)
+
+  return tarefaApagada
+}

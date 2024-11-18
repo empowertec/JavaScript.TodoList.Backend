@@ -117,57 +117,43 @@ app.put('/tarefa/:id', validarAutenticacao, async (request, response) => {
 
 app.delete('/tarefa/:id', validarAutenticacao, async (request, response) => {
   try {
-    const tarefas = await lerTarefas()
-    const index = tarefas.findIndex(t => t.id === request.params.id)
-
-    if (index === -1) {
-      return response.status(404).json({ error: 'Tarefa não encontrada' })
-    }
-
-    tarefas.splice(index, 1)
-
-    await gravarTarefas(tarefas)
-
-    response.status(204).send()
+    const tarefaApagada = await bancoDeDados.apagarTarefa(request.params.id)
+    response.json(tarefaApagada)
   } catch (error) {
+    if (error instanceof bancoDeDados.ErroDeBancoDeDados) {
+      const httpCode = error instanceof bancoDeDados.ErroDeValidacao ? 400 : 404
+      return response.status(httpCode).json({ error: error.message })  
+    }
     response.status(500).json({ error: 'Erro ao deletar a tarefa' })
   }
 })
 
 app.patch('/tarefa/:id/completa', validarAutenticacao, async (request, response) => {
   try {
-    const tarefas = await lerTarefas()
-    const index = tarefas.findIndex(t => t.id === request.params.id)
-
-    if (index === -1) {
-      return response.status(404).json({ error: 'Tarefa não encontrada' })
-    }
-
-    tarefas[index].completa = true
-
-    await gravarTarefas(tarefas)
-
-    response.json(tarefas[index])
+    const tarefaAtualizada = await bancoDeDados.atualizarTarefa(request.params.id, {
+      completa: true
+    })
+    response.json(tarefaAtualizada)
   } catch (error) {
+    if (error instanceof bancoDeDados.ErroDeBancoDeDados) {
+      const httpCode = error instanceof bancoDeDados.ErroDeValidacao ? 400 : 404
+      return response.status(httpCode).json({ error: error.message })  
+    }
     response.status(500).json({ error: 'Erro ao marcar a tarefa como completa' })
   }
 })
 
 app.patch('/tarefa/:id/incompleta', validarAutenticacao, async (request, response) => {
   try {
-    const tarefas = await lerTarefas()
-    const index = tarefas.findIndex(t => t.id === request.params.id)
-
-    if (index === -1) {
-      return response.status(404).json({ error: 'Tarefa não encontrada' })
-    }
-
-    tarefas[index].completa = false
-
-    await gravarTarefas(tarefas)
-
-    response.json(tarefas[index])
+    const tarefaAtualizada = await bancoDeDados.atualizarTarefa(request.params.id, {
+      completa: false
+    })
+    response.json(tarefaAtualizada)
   } catch (error) {
+    if (error instanceof bancoDeDados.ErroDeBancoDeDados) {
+      const httpCode = error instanceof bancoDeDados.ErroDeValidacao ? 400 : 404
+      return response.status(httpCode).json({ error: error.message })  
+    }
     response.status(500).json({ error: 'Erro ao marcar a tarefa como incompleta' })
   }
 })

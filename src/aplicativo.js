@@ -71,6 +71,9 @@ app.get('/tarefas', validarAutenticacao, async (request, response) => {
     const tarefas = await bancoDeDados.obterTarefas()
     response.json(tarefas)
   } catch (error) {
+    if (error instanceof bancoDeDados.ErroDeBancoDeDados) {
+      return response.status(404).json({ error: error.message })  
+    }
     response.status(500).json({ error: 'Erro ao obter tarefas' })
   }
 })
@@ -80,6 +83,9 @@ app.get('/tarefa/:id', validarAutenticacao, async (request, response) => {
     const tarefa = await bancoDeDados.obterTarefa(request.params.id)
     response.json(tarefa)
   } catch (error) {
+    if (error instanceof bancoDeDados.ErroDeBancoDeDados) {
+      return response.status(404).json({ error: error.message })  
+    }
     response.status(500).json({ error: 'Erro ao obter a tarefa' })
   }
 })

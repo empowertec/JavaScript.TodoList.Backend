@@ -20,6 +20,8 @@ export async function gravarTarefas(tarefas) {
   }
 }
 
+export class ErroDeBancoDeDados extends Error {}
+
 // CRUD - Read
 
 export async function obterTarefas() {
@@ -32,7 +34,7 @@ export async function obterTarefa(id) {
   const tarefas = await lerTarefas()
   const tarefa = tarefas.find(t => t.id === id)
   if (!tarefa) {
-    throw new Error('Tarefa não encontrada')
+    throw new ErroDeBancoDeDados('Tarefa não encontrada')
   }
   return tarefa
 }

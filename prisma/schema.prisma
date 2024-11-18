@@ -9,12 +9,12 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "mongodb"
   url      = env("DATABASE_URL")
 }
 
 model Tarefa {
-  id          String    @id @default(uuid())
+  id          String    @id @default(uuid()) @map("_id")
   descricao   String
   completa    Boolean
 }

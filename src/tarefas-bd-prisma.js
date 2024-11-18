@@ -35,15 +35,12 @@ export async function criarTarefa(tarefa) {
     throw new ErroDeValidacao('O campo "completa" deve ser boolean.')
   }
 
-  const novaTarefa = {
-    id: Date.now().toString(),
-    descricao,
-    completa: !!completa
-  }
-
-  const tarefas = await lerTarefas()
-  tarefas.push(novaTarefa)
-  await gravarTarefas(tarefas)
+  const novaTarefa =  await prisma.tarefa.create({
+    data: {
+      descricao,
+      completa: !!completa
+    }
+  })
 
   return novaTarefa
 }

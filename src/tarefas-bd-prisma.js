@@ -48,33 +48,33 @@ export async function criarTarefa(tarefa) {
 // CRUD - Update
 
 export async function atualizarTarefa(id, tarefa) {
-    const { descricao, completa } = tarefa
-    const tarefas = await lerTarefas()
-    const index = tarefas.findIndex(t => t.id === id)
+  const { descricao, completa } = tarefa
 
-    if (index === -1) {
-      throw new ErroDeOperacao('Tarefa não encontrada')
-    }
+  const tarefaExistente = await prisma.tarefa.findUnique({
+    where: { id }
+  })
 
-    if ((typeof descricao !== 'string' && descricao !== undefined) || descricao?.trim() === "") {
-      throw new ErroDeValidacao('O campo "descricao" é obrigatório e deve ser uma string.')
-    }
+  if (!tarefaExistente) {
+    throw new ErroDeOperacao('Tarefa não encontrada')
+  }
 
-    if (typeof completa !== 'boolean' && completa !== undefined) {
-      throw new ErroDeValidacao('O campo "completa" deve ser boolean.')
-    }
+  if ((typeof descricao !== 'string' && descricao !== undefined) || descricao?.trim() === "") {
+    throw new ErroDeValidacao('O campo "descricao" é obrigatório e deve ser uma string.')
+  }
 
-    if (descricao !== undefined) {
-      tarefas[index].descricao = descricao
-    }
+  if (typeof completa !== 'boolean' && completa !== undefined) {
+    throw new ErroDeValidacao('O campo "completa" deve ser boolean.')
+  }
 
-    if (completa !== undefined) {
-      tarefas[index].completa = completa
-    }
+  const tarefaAlterada = await prisma.tarefa.update({
+    data: {
+      descricao: descricao ?? tarefaExistente.descricao,
+      completa: completa ?? tarefaExistente.completa,
+    },
+    where: { id }
+  })
 
-    await gravarTarefas(tarefas)
-
-    return JSON.parse(JSON.stringify(tarefas[index]))
+  return tarefaAlterada
 }
 
 // CRUD - Delete

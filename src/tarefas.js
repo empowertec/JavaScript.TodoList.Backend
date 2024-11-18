@@ -41,7 +41,29 @@ export async function obterTarefa(id) {
 
 // CRUD - Create
 
-export async function criarTarefa(tarefa) { }
+export async function criarTarefa(tarefa) {
+  const { descricao, completa } = tarefa
+
+  if (typeof descricao !== 'string' || descricao.trim() === "") {
+    throw new ErroDeBancoDeDados('O campo "descricao" é obrigatório e deve ser uma string.')
+  }
+
+  if (typeof completa !== 'boolean' && completa !== undefined) {
+    throw new ErroDeBancoDeDados('O campo "completa" deve ser boolean.')
+  }
+
+  const novaTarefa = {
+    id: Date.now().toString(),
+    descricao,
+    completa: !!completa
+  }
+
+  const tarefas = await lerTarefas()
+  tarefas.push(novaTarefa)
+  await gravarTarefas(tarefas)
+
+  return novaTarefa
+}
 
 // CRUD - Update
 

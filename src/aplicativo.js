@@ -92,28 +92,12 @@ app.get('/tarefa/:id', validarAutenticacao, async (request, response) => {
 
 app.post('/tarefa', validarAutenticacao, async (request, response) => {
   try {
-    const { descricao, completa } = request.body
-
-    if (typeof descricao !== 'string' || descricao.trim() === "") {
-      return response.status(400).json({ error: 'O campo "descricao" é obrigatório e deve ser uma string.' })
-    }
-
-    if (typeof completa !== 'boolean' && completa !== undefined) {
-      return response.status(400).json({ error: 'O campo "completa" deve ser boolean.' })
-    }
-
-    const novaTarefa = {
-      id: Date.now().toString(),
-      descricao,
-      completa: !!completa
-    }
-
-    const tarefas = await lerTarefas()
-    tarefas.push(novaTarefa)
-    await gravarTarefas(tarefas)
-
+    const novaTarefa = await bancoDeDados.criarTarefa(request.body)
     response.status(201).json(novaTarefa)
   } catch (error) {
+    if (error instanceof bancoDeDados.ErroDeBancoDeDados) {
+      return response.status(400).json({ error: error.message })  
+    }
     response.status(500).json({ error: 'Erro ao criar tarefa' })
   }
 })
